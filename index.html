@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>I Spy: Purple Room Challenge</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; background-color: #1a1c1e; color: #e2e2e2; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         h1 { color: #9b59b6; text-shadow: 2px 2px 4px #000; margin: 0 0 5px 0; }
         #game-container { position: relative; width: 960px; height: 600px; border: 5px solid #34495e; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); overflow: hidden; background-color: #000; }
-        #game-background { width: 100%; height: 100%; object-fit: fill; }
+        
+        /* Zoom wrapper added to allow panning and scaling across the viewport */
+        #zoom-wrapper {
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0;
+            cursor: grab;
+            touch-action: none; /* Prevents default browser page zooming */
+        }
+        #zoom-wrapper:active { cursor: grabbing; }
+        #game-background { width: 100%; height: 100%; object-fit: fill; user-select: none; -webkit-user-drag: none; }
         
         /* Homescreen Styles */
         #home-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 28, 30, 0.95); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
@@ -33,11 +43,13 @@
     <div id="game-container">
         <div id="home-screen">
             <h2>Welcome to I Spy!</h2>
-            <p>1. Observe the room closely.<br>2. Type a description of where the hidden object is.<br>3. Need help? Guess twice to reveal a riddle.</p>
+            <p>1. Observe the room closely.<br>2. Type a description of where the hidden object is.<br>3. Need help? Guess twice to reveal a riddle.<br><br>💡 <b>Tip:</b> Pinch to zoom or use your Mouse Wheel! Drag to look around.</p>
             <button class="start-btn" onclick="startGame()">Start Game</button>
         </div>
 
-        <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Room">
+        <div id="zoom-wrapper">
+            <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Room">
+        </div>
         <div id="win-message"><h1>🎉 Mystery Solved! 🎉</h1></div>
     </div>
 
@@ -55,10 +67,10 @@
 
     <script>
         const targetItems = [
-            { name: "Paper Fan 🪭", attempts: 0, keywords: ["behind", "globe", "left", "laptop", "propped", "shelf", "corner"], hint: "A silent orator of the East, hiding in the shadow of the world." },
-            { name: "Peanut 🥜", attempts: 0, keywords: ["resting", "seat", "atop", "cushion", "below", "desk", "beside", "strap"], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
-            { name: "Basketball Trophy 🏆", attempts: 0, keywords: ["perched", "shelf", "left", "football", "front", "boombox", "between", "mannequin", "adjacent", "doll"], hint: "A hollow victory, standing guard over a motionless wooden performer." },
-            { name: "Harmonica 🪗", attempts: 0, keywords: ["resting", "shelf", "right", "tea", "adjacent", "teapot", "between", "pot", "angel"], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
+            { name: "Paper Fan", attempts: 0, keywords: ["behind", "globe", "left", "laptop", "propped", "shelf", "corner"], hint: "A silent orator of the East, hiding in the shadow of the world." },
+            { name: "Peanut 🥜", attempts: 0, keywords: ["resting", "seat", "atop", "top", "cushion", "below", "desk", "beside", "strap"], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
+            { name: "Basketball Trophy 🏆", attempts: 0, keywords: ["perched", "shelf", "left", "football", "trophy", "between", "front", "boombox", "between", "figure", "figurine", "mannequin", "adjacent", "doll"], hint: "A hollow victory, standing guard over a motionless wooden performer." },
+            { name: "Harmonica", attempts: 0, keywords: ["resting", "shelf", "right", "tea", "adjacent", "teapot", "between", "pot", "angel"], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
             { name: "Air Vent 💨", attempts: 0, keywords: ["corner", "mounted", "wall", "above", "birdcage", "high", "over"], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
             { name: "Cherry 🍒", attempts: 0, keywords: ["resting", "paddle", "left", "olive", "atop", "nestled", "racket", "adjacent", "ball"], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
             { name: "Coat Hanger 🧥", attempts: 0, keywords: ["hanging", "shelf", "draped", "left", "trophy", "suspended", "wall", "obscured", "flower"], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
@@ -115,6 +127,111 @@
 
         document.getElementById('submit-btn').addEventListener('click', checkAnswer);
         locationInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkAnswer(); });
+
+        // --- LIGHTWEIGHT PINCH, ZOOM & PAN MOTOR ---
+        const container = document.getElementById('game-container');
+        const wrapper = document.getElementById('zoom-wrapper');
+
+        let scale = 1;
+        let pointX = 0;
+        let pointY = 0;
+        let start = { x: 0, y: 0 };
+        let isDragging = false;
+        let evCache = [];
+        let prevDiff = -1;
+
+        function updateTransform() {
+            // Keep panning limits bounded roughly to viewport container
+            const maxPanX = 0;
+            const minPanX = container.clientWidth - (container.clientWidth * scale);
+            const maxPanY = 0;
+            const minPanY = container.clientHeight - (container.clientHeight * scale);
+
+            if (scale > 1) {
+                pointX = Math.min(maxPanX, Math.max(minPanX, pointX));
+                pointY = Math.min(maxPanY, Math.max(minPanY, pointY));
+            } else {
+                pointX = 0;
+                pointY = 0;
+            }
+            wrapper.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        // --- Desktop Mouse Wheel Support ---
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const xs = (e.clientX - container.getBoundingClientRect().left - pointX) / scale;
+            const ys = (e.clientY - container.getBoundingClientRect().top - pointY) / scale;
+            const delta = -e.deltaY;
+
+            if (delta > 0) {
+                scale = Math.min(scale + 0.3, 4); // Max zoom 4x
+            } else {
+                scale = Math.max(scale - 0.3, 1); // Min zoom 1x
+            }
+
+            pointX = e.clientX - container.getBoundingClientRect().left - xs * scale;
+            pointY = e.clientY - container.getBoundingClientRect().top - ys * scale;
+
+            updateTransform();
+        });
+
+        // --- Touch & Mouse Panning Setup ---
+        wrapper.addEventListener('pointerdown', (e) => {
+            evCache.push(e);
+            if (evCache.length === 1) {
+                isDragging = true;
+                start = { x: e.clientX - pointX, y: e.clientY - pointY };
+            }
+        });
+
+        wrapper.addEventListener('pointermove', (e) => {
+            // Find this event in the cache and update it
+            const index = evCache.findIndex((ev) => ev.pointerId === e.pointerId);
+            if (index > -1) evCache[index] = e;
+
+            // Handle Mobile Pinch-To-Zoom
+            if (evCache.length === 2) {
+                isDragging = false; 
+                const curDiff = Math.hypot(evCache[0].clientX - evCache[1].clientX, evCache[0].clientY - evCache[1].clientY);
+
+                if (prevDiff > 0) {
+                    const midX = (evCache[0].clientX + evCache[1].clientX) / 2 - container.getBoundingClientRect().left;
+                    const midY = (evCache[0].clientY + evCache[1].clientY) / 2 - container.getBoundingClientRect().top;
+                    const xs = (midX - pointX) / scale;
+                    const ys = (midY - pointY) / scale;
+
+                    if (curDiff > prevDiff) {
+                        scale = Math.min(scale + 0.05, 4);
+                    } else if (curDiff < prevDiff) {
+                        scale = Math.max(scale - 0.05, 1);
+                    }
+
+                    pointX = midX - xs * scale;
+                    pointY = midY - ys * scale;
+                    updateTransform();
+                }
+                prevDiff = curDiff;
+            } 
+            // Handle regular dragging (Desktop drag or single finger pan when zoomed)
+            else if (isDragging && scale > 1) {
+                pointX = e.clientX - start.x;
+                pointY = e.clientY - start.y;
+                updateTransform();
+            }
+        });
+
+        const handlePointerUp = (e) => {
+            const index = evCache.findIndex((ev) => ev.pointerId === e.pointerId);
+            if (index > -1) evCache.splice(index, 1);
+            if (evCache.length < 2) prevDiff = -1;
+            if (evCache.length === 0) isDragging = false;
+        };
+
+        wrapper.addEventListener('pointerup', handlePointerUp);
+        wrapper.addEventListener('pointercancel', handlePointerUp);
+        wrapper.addEventListener('pointerout', handlePointerUp);
+        wrapper.addEventListener('pointerleave', handlePointerUp);
     </script>
 </body>
 </html>
