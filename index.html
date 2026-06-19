@@ -3,160 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I Spy: Purple Room Description Challenge</title>
+    <title>I Spy: Purple Room Challenge</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1c1e;
-            color: #e2e2e2;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        h1 {
-            color: #9b59b6; /* Purple themed title */
-            text-shadow: 2px 2px 4px #000;
-            margin: 0 0 5px 0;
-        }
-
-        p {
-            margin: 0 0 15px 0;
-            color: #95a5a6;
-        }
-
-        /* Scaled game board container matching standard layout */
-        #game-container {
-            position: relative;
-            width: 960px;
-            height: 600px; 
-            border: 5px solid #34495e;
-            border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
-            overflow: hidden;
-            background-color: #000;
-        }
-
-        #game-background {
-            width: 100%;
-            height: 100%;
-            object-fit: fill;
-        }
-
-        /* UI Control Dashboard */
-        #control-panel {
-            margin-top: 20px;
-            width: 960px;
-            display: flex;
-            gap: 20px;
-            align-items: stretch;
-        }
-
-        #current-prompt-box {
-            flex: 1;
-            background-color: #2c3e50;
-            border-radius: 8px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border: 2px solid #34495e;
-        }
-
-        #prompt-text {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #fff;
-            margin: 0;
-        }
-
-        #input-area {
-            flex: 2;
-            display: flex;
-            gap: 10px;
-        }
-
-        #location-input {
-            flex: 1;
-            background-color: #111;
-            border: 2px solid #2c3e50;
-            border-radius: 8px;
-            color: #fff;
-            padding: 0 20px;
-            font-size: 1.2rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        #location-input:focus {
-            border-color: #9b59b6;
-        }
-
-        #submit-btn {
-            background-color: #9b59b6;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 0 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        #submit-btn:hover {
-            background-color: #8e44ad;
-        }
-
-        /* Feedback Styles */
-        #feedback-msg {
-            margin-top: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            min-height: 25px;
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1c1e; color: #e2e2e2; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        h1 { color: #9b59b6; text-shadow: 2px 2px 4px #000; margin: 0 0 5px 0; }
+        #game-container { position: relative; width: 960px; height: 600px; border: 5px solid #34495e; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); overflow: hidden; background-color: #000; }
+        #game-background { width: 100%; height: 100%; object-fit: fill; }
+        #control-panel { margin-top: 20px; width: 960px; display: flex; gap: 20px; align-items: stretch; }
+        #current-prompt-box { flex: 1; background-color: #2c3e50; border-radius: 8px; padding: 15px; border: 2px solid #34495e; }
+        #input-area { flex: 2; display: flex; gap: 10px; }
+        #location-input { flex: 1; background-color: #111; border: 2px solid #2c3e50; border-radius: 8px; color: #fff; padding: 0 20px; font-size: 1.2rem; outline: none; }
+        #submit-btn { background-color: #9b59b6; color: #fff; border: none; border-radius: 8px; padding: 0 30px; cursor: pointer; transition: 0.2s; }
+        #submit-btn:hover { background-color: #8e44ad; }
+        #feedback-msg { margin-top: 10px; font-weight: bold; min-height: 25px; }
         .success-text { color: #2ecc71; }
         .error-text { color: #e74c3c; }
-
-        #progress-counter {
-            font-size: 1.1rem;
-            color: #9b59b6;
-            margin-top: 5px;
-            font-weight: bold;
-        }
-
-        /* Game Over Screen Overlay */
-        #win-message {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(46, 204, 113, 0.95);
-            color: #fff;
-            padding: 30px 60px;
-            border-radius: 10px;
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            z-index: 20;
-            border: 2px solid #27ae60;
-        }
+        #win-message { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(46, 204, 113, 0.95); padding: 30px; border-radius: 10px; z-index: 20; text-align: center; }
     </style>
 </head>
 <body>
 
-    <h1>I Spy: Purple Room Edition</h1>
-    <p>Describe where each hidden item is located relative to the objects around it!</p>
-
+    <h1>I Spy: Purple Room Challenge</h1>
     <div id="game-container">
-        <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Cluttered Purple Computer Room">
-        <div id="win-message">🎉 Masters of Perception! You Found Everything! 🎉</div>
+        <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Room">
+        <div id="win-message"><h1>🎉 Mystery Solved! 🎉</h1></div>
     </div>
 
     <div id="control-panel">
@@ -164,102 +34,37 @@
             <span id="progress-counter">Item 1 of 10</span>
             <p id="prompt-text">Find the: 🔍 loading...</p>
         </div>
-        
         <div id="input-area">
-            <input type="text" id="location-input" placeholder="e.g., behind the globe, on the top shelf..." autocomplete="off">
-            <button id="submit-btn">Submit Answer</button>
+            <input type="text" id="location-input" placeholder="Describe the location..." autocomplete="off">
+            <button id="submit-btn">Submit</button>
         </div>
     </div>
-
     <div id="feedback-msg"></div>
 
     <script>
-        // Sequence of 10 items mapping directly to the room image with robust word verification arrays
         const targetItems = [
-            {
-                name: "Paper Fan 🪭",
-                validAnswers: [
-                    ["globe", "behind"], ["globe", "next"], ["globe", "tucked"], ["map", "behind"], ["desk", "globe"]
-                ],
-                hint: "Look closely at the left side of the main desk, right behind a spherical object."
-            },
-            {
-                name: "Peanut 🥜",
-                validAnswers: [
-                    ["seat", "cushion"], ["chair", "cushion"], ["seat", "top"], ["chair", "top"], ["on", "cushion"], ["blue", "cushion"]
-                ],
-                hint: "Check down low on the patterned colorful cushion of the blue desk chair."
-            },
-            {
-                name: "Basketball Trophy 🏆",
-                validAnswers: [
-                    ["shelf", "middle"], ["mannequin", "right"], ["mannequin", "next"], ["mannequin", "beside"], ["doll", "next"]
-                ],
-                hint: "Check the middle wall shelf, right next to the little jointed wooden artist doll."
-            },
-            {
-                name: "Harmonica 🪗",
-                validAnswers: [
-                    ["shelf", "top"], ["teapot", "next"], ["teapot", "right"], ["angel", "left"], ["pot", "right"]
-                ],
-                hint: "It's resting flat on the edge of the very top shelf between a white teapot and an angel ornament."
-            },
-            {
-                name: "Air Vent 💨",
-                validAnswers: [
-                    ["wall", "top", "right"], ["corner", "top", "right"], ["above", "cage"], ["top", "cage"], ["vent", "top"]
-                ],
-                hint: "Look all the way up into the top-right corner of the room layout."
-            },
-            {
-                name: "Flute 🎶",
-                validAnswers: [
-                    ["desk", "lamp"], ["behind", "lamp"], ["behind", "camera"], ["camera", "next"], ["lamp", "base"]
-                ],
-                hint: "It is lying horizontally on the desk surface, hidden behind the base of the desk lamp."
-            },
-            {
-                name: "Coat Hanger 🧥",
-                validAnswers: [
-                    ["shelf", "top", "left"], ["hanging", "shelf"], ["above", "trophy"], ["over", "trophy"], ["green", "hanger"]
-                ],
-                hint: "Look on the far-left edge of the top shelf. It's dangling downwards."
-            },
-            {
-                name: "Necklace 📿",
-                validAnswers: [
-                    ["chair", "back"], ["chair", "draped"], ["chair", "hanging"], ["seat", "back"], ["chair", "on"]
-                ],
-                hint: "Look closely at the blue office chair where a person would sit down."
-            },
-            {
-                name: "Blue Ribbon 🚲",
-                validAnswers: [
-                    ["wall", "above", "lamp"], ["above", "lamp"], ["bicycle", "sign"], ["wall", "circle"], ["bike", "sign"]
-                ],
-                hint: "It looks like a circular blue bicycle sign mounted on the wall space directly above the lamp."
-            },
-            {
-                name: "Golfball ⚪",
-                validAnswers: [
-                    ["under", "trophy"], ["below", "trophy"], ["shelf", "middle", "left"], ["egg", "next"], ["trophy", "left"]
-                ],
-                hint: "Look under the big silver trophy cup on the left side of the middle shelf."
-            }
+            { name: "Paper Fan 🪭", attempts: 0, validAnswers: [["fan", "behind", "globe"], ["fan", "tucked", "globe"], ["fan", "left", "laptop"], ["fan", "propped", "shelf"], ["fan", "corner", "desk"], ["fan", "obscured", "globe"], ["fan", "adjacent", "globe"]], hint: "A silent orator of the East, hiding in the shadow of the world." },
+            { name: "Peanut 🥜", attempts: 0, validAnswers: [["peanut", "resting", "seat"], ["peanut", "atop", "cushion"], ["peanut", "near", "edge"], ["peanut", "below", "desk"], ["peanut", "center", "seat"], ["peanut", "beside", "strap"]], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
+            { name: "Basketball Trophy 🏆", attempts: 0, validAnswers: [["trophy", "perched", "shelf"], ["trophy", "left", "football"], ["trophy", "front", "boombox"], ["trophy", "between", "mannequin"], ["trophy", "adjacent", "doll"]], hint: "A hollow victory, standing guard over a motionless wooden performer." },
+            { name: "Harmonica 🪗", attempts: 0, validAnswers: [["harmonica", "resting", "shelf"], ["harmonica", "right", "tea"], ["harmonica", "adjacent", "teapot"], ["harmonica", "between", "pot", "angel"]], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
+            { name: "Air Vent 💨", attempts: 0, validAnswers: [["vent", "corner"], ["vent", "mounted", "wall"], ["vent", "above", "birdcage"], ["vent", "high", "wall"], ["vent", "over", "birdcage"], ["vent", "adjacent", "corner"]], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
+            { name: "Cherry 🍒", attempts: 0, validAnswers: [["cherry", "resting", "paddle"], ["cherry", "left", "olive"], ["cherry", "atop", "paddle"], ["cherry", "nestled", "racket"], ["cherry", "adjacent", "ball"]], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
+            { name: "Coat Hanger 🧥", attempts: 0, validAnswers: [["hanger", "hanging", "shelf"], ["hanger", "draped", "shelf"], ["hanger", "left", "trophy"], ["hanger", "suspended", "wall"], ["hanger", "obscured", "flower"], ["hanger", "adjacent", "trophy"]], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
+            { name: "Necklace 📿", attempts: 0, validAnswers: [["necklace", "draped", "chair"], ["necklace", "hanging", "backrest"], ["necklace", "behind", "cat"], ["necklace", "suspended", "upholstery"]], hint: "A circle of cold gold, mourning the weight of a person who never arrived." },
+            { name: "Golf ball ⚪", attempts: 0, validAnswers: [["ball", "resting", "floor"], ["ball", "behind", "bottle"], ["ball", "tucked", "desk"], ["ball", "lying", "leg"], ["ball", "obscured", "bottle"], ["ball", "adjacent", "bottle"]], hint: "A traveler from the manicured green, now an exile on a dark, cluttered floor." },
+            { name: "Maple leaf 🍁", attempts: 0, validAnswers: [["leaf", "behind", "birdcage"], ["leaf", "above", "lei"], ["leaf", "attached", "wall"], ["leaf", "obscured", "birdcage"], ["leaf", "pinned", "pushpin"]], hint: "A burning memory of autumn, forever frozen by a sharp, blue transgression." }
         ];
 
         let currentItemIndex = 0;
-
         const promptText = document.getElementById('prompt-text');
         const progressCounter = document.getElementById('progress-counter');
         const locationInput = document.getElementById('location-input');
-        const submitBtn = document.getElementById('submit-btn');
         const feedbackMsg = document.getElementById('feedback-msg');
 
         function loadItem() {
             if (currentItemIndex < targetItems.length) {
-                const currentItem = targetItems[currentItemIndex];
-                promptText.innerText = `Find the: ${currentItem.name}`;
+                const item = targetItems[currentItemIndex];
+                promptText.innerText = `Find the: ${item.name}`;
                 progressCounter.innerText = `Item ${currentItemIndex + 1} of ${targetItems.length}`;
                 locationInput.value = "";
                 locationInput.focus();
@@ -272,36 +77,25 @@
 
         function checkAnswer() {
             const playerAnswer = locationInput.value.toLowerCase().trim();
-            if (!playerAnswer) return;
-
-            const currentItem = targetItems[currentItemIndex];
-            let isCorrect = false;
-
-            for (let rule of currentItem.validAnswers) {
-                const matchesRule = rule.every(keyword => playerAnswer.includes(keyword));
-                if (matchesRule) {
-                    isCorrect = true;
-                    break;
-                }
-            }
+            const item = targetItems[currentItemIndex];
+            let isCorrect = item.validAnswers.some(rule => rule.every(k => playerAnswer.includes(k)));
 
             if (isCorrect) {
-                feedbackMsg.innerText = "🎯 Spot on! Excellent observation skills.";
+                feedbackMsg.innerText = "🎯 Spot on!";
                 feedbackMsg.className = "success-text";
-                
                 currentItemIndex++;
                 setTimeout(loadItem, 1200);
             } else {
-                feedbackMsg.innerText = `❌ Not quite right. Hint: ${currentItem.hint}`;
+                item.attempts++;
+                let msg = "❌ Not quite right. Keep looking!";
+                if (item.attempts > 2) msg += ` Hint: ${item.hint}`;
+                feedbackMsg.innerText = msg;
                 feedbackMsg.className = "error-text";
             }
         }
 
-        submitBtn.addEventListener('click', checkAnswer);
-        locationInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') checkAnswer();
-        });
-
+        document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+        locationInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkAnswer(); });
         loadItem();
     </script>
 </body>
