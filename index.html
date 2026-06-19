@@ -37,13 +37,13 @@
     <h1>I Spy: Purple Room Challenge</h1>
     <div id="game-container">
         <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Room">
-        <div id="win-message"><h1>🎉 Mystery Solved! 🎉</h1></div>
+        <div id="win-message"><h1>Mystery Solved!</h1></div>
     </div>
 
     <div id="control-panel">
         <div id="current-prompt-box">
             <span id="progress-counter">Item 1 of 10</span>
-            <p id="prompt-text">Find the: 🔍 loading...</p>
+            <p id="prompt-text">Find the: loading...</p>
         </div>
         <div id="input-area">
             <input type="text" id="location-input" placeholder="Describe the location..." autocomplete="off">
@@ -54,16 +54,16 @@
 
     <script>
         const targetItems = [
-            { name: "Paper Fan 🪭", attempts: 0, validAnswers: [["fan", "behind", "globe"], ["fan", "tucked", "globe"], ["fan", "left", "laptop"], ["fan", "propped", "shelf"], ["fan", "corner", "desk"], ["fan", "obscured", "globe"], ["fan", "adjacent", "globe"]], hint: "A silent orator of the East, hiding in the shadow of the world." },
-            { name: "Peanut 🥜", attempts: 0, validAnswers: [["peanut", "resting", "seat"], ["peanut", "atop", "cushion"], ["peanut", "near", "edge"], ["peanut", "below", "desk"], ["peanut", "center", "seat"], ["peanut", "beside", "strap"]], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
-            { name: "Basketball Trophy 🏆", attempts: 0, validAnswers: [["trophy", "perched", "shelf"], ["trophy", "left", "football"], ["trophy", "front", "boombox"], ["trophy", "between", "mannequin"], ["trophy", "adjacent", "doll"]], hint: "A hollow victory, standing guard over a motionless wooden performer." },
-            { name: "Harmonica 🪗", attempts: 0, validAnswers: [["harmonica", "resting", "shelf"], ["harmonica", "right", "tea"], ["harmonica", "adjacent", "teapot"], ["harmonica", "between", "pot", "angel"]], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
-            { name: "Air Vent 💨", attempts: 0, validAnswers: [["vent", "corner"], ["vent", "mounted", "wall"], ["vent", "above", "birdcage"], ["vent", "high", "wall"], ["vent", "over", "birdcage"], ["vent", "adjacent", "corner"]], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
-            { name: "Cherry 🍒", attempts: 0, validAnswers: [["cherry", "resting", "paddle"], ["cherry", "left", "olive"], ["cherry", "atop", "paddle"], ["cherry", "nestled", "racket"], ["cherry", "adjacent", "ball"]], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
-            { name: "Coat Hanger 🧥", attempts: 0, validAnswers: [["hanger", "hanging", "shelf"], ["hanger", "draped", "shelf"], ["hanger", "left", "trophy"], ["hanger", "suspended", "wall"], ["hanger", "obscured", "flower"], ["hanger", "adjacent", "trophy"]], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
-            { name: "Necklace 📿", attempts: 0, validAnswers: [["necklace", "draped", "chair"], ["necklace", "hanging", "backrest"], ["necklace", "behind", "cat"], ["necklace", "suspended", "upholstery"]], hint: "A circle of cold gold, mourning the weight of a person who never arrived." },
-            { name: "Golf ball ⚪", attempts: 0, validAnswers: [["ball", "resting", "floor"], ["ball", "behind", "bottle"], ["ball", "tucked", "desk"], ["ball", "lying", "leg"], ["ball", "obscured", "bottle"], ["ball", "adjacent", "bottle"]], hint: "A traveler from the manicured green, now an exile on a dark, cluttered floor." },
-            { name: "Maple leaf 🍁", attempts: 0, validAnswers: [["leaf", "behind", "birdcage"], ["leaf", "above", "lei"], ["leaf", "attached", "wall"], ["leaf", "obscured", "birdcage"], ["leaf", "pinned", "pushpin"]], hint: "A burning memory of autumn, forever frozen by a sharp, blue transgression." }
+            { name: "Paper Fan", attempts: 0, validAnswers: [["fan", "behind", "globe"], ["fan", "tucked", "globe"], ["fan", "left", "laptop"], ["fan", "propped", "shelf"], ["fan", "corner", "desk"], ["fan", "obscured", "globe"], ["fan", "adjacent", "globe"]], hint: "A silent orator of the East, hiding in the shadow of the world." },
+            { name: "Peanut", attempts: 0, validAnswers: [["peanut", "resting", "seat"], ["peanut", "atop", "cushion"], ["peanut", "near", "edge"], ["peanut", "below", "desk"], ["peanut", "center", "seat"], ["peanut", "beside", "strap"]], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
+            { name: "Basketball Trophy", attempts: 0, validAnswers: [["trophy", "perched", "shelf"], ["trophy", "left", "football"], ["trophy", "front", "boombox"], ["trophy", "between", "mannequin"], ["trophy", "adjacent", "doll"]], hint: "A hollow victory, standing guard over a motionless wooden performer." },
+            { name: "Harmonica", attempts: 0, validAnswers: [["harmonica", "resting", "shelf"], ["harmonica", "right", "tea"], ["harmonica", "adjacent", "teapot"], ["harmonica", "between", "pot", "angel"]], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
+            { name: "Air Vent", attempts: 0, validAnswers: [["vent", "corner"], ["vent", "mounted", "wall"], ["vent", "above", "birdcage"], ["vent", "high", "wall"], ["vent", "over", "birdcage"], ["vent", "adjacent", "corner"]], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
+            { name: "Cherry", attempts: 0, validAnswers: [["cherry", "resting", "paddle"], ["cherry", "left", "olive"], ["cherry", "atop", "paddle"], ["cherry", "nestled", "racket"], ["cherry", "adjacent", "ball"]], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
+            { name: "Coat Hanger", attempts: 0, validAnswers: [["hanger", "hanging", "shelf"], ["hanger", "draped", "shelf"], ["hanger", "left", "trophy"], ["hanger", "suspended", "wall"], ["hanger", "obscured", "flower"], ["hanger", "adjacent", "trophy"]], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
+            { name: "Necklace", attempts: 0, validAnswers: [["necklace", "draped", "chair"], ["necklace", "hanging", "backrest"], ["necklace", "behind", "cat"], ["necklace", "suspended", "upholstery"]], hint: "A circle of cold gold, mourning the weight of a person who never arrived." },
+            { name: "Golf ball", attempts: 0, validAnswers: [["ball", "resting", "floor"], ["ball", "behind", "bottle"], ["ball", "tucked", "desk"], ["ball", "lying", "leg"], ["ball", "obscured", "bottle"], ["ball", "adjacent", "bottle"]], hint: "A traveler from the manicured green, now an exile on a dark, cluttered floor." },
+            { name: "Maple leaf", attempts: 0, validAnswers: [["leaf", "behind", "birdcage"], ["leaf", "above", "lei"], ["leaf", "attached", "wall"], ["leaf", "obscured", "birdcage"], ["leaf", "pinned", "pushpin"]], hint: "A burning memory of autumn, forever frozen by a sharp, blue transgression." }
         ];
 
         let currentItemIndex = 0;
