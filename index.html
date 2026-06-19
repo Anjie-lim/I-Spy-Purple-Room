@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Spy: Purple Room Challenge</title>
     <style>
-        body { 
-            /* Added font-family support for emojis */
-            font-family: 'Segoe UI', Tahoma, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; 
-            background-color: #1a1c1e; 
-            color: #e2e2e2; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-        }
+        body { font-family: 'Segoe UI', Tahoma, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif; background-color: #1a1c1e; color: #e2e2e2; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
         h1 { color: #9b59b6; text-shadow: 2px 2px 4px #000; margin: 0 0 5px 0; }
         #game-container { position: relative; width: 960px; height: 600px; border: 5px solid #34495e; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.7); overflow: hidden; background-color: #000; }
         #game-background { width: 100%; height: 100%; object-fit: fill; }
+        
+        /* Homescreen Styles */
+        #home-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 28, 30, 0.95); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        #home-screen h2 { color: #9b59b6; }
+        
         #control-panel { margin-top: 20px; width: 960px; display: flex; gap: 20px; align-items: stretch; }
         #current-prompt-box { flex: 1; background-color: #2c3e50; border-radius: 8px; padding: 15px; border: 2px solid #34495e; }
         #input-area { flex: 2; display: flex; gap: 10px; }
         #location-input { flex: 1; background-color: #111; border: 2px solid #2c3e50; border-radius: 8px; color: #fff; padding: 0 20px; font-size: 1.2rem; outline: none; }
-        #submit-btn { background-color: #9b59b6; color: #fff; border: none; border-radius: 8px; padding: 0 30px; cursor: pointer; transition: 0.2s; }
-        #submit-btn:hover { background-color: #8e44ad; }
+        #submit-btn, .start-btn { background-color: #9b59b6; color: #fff; border: none; border-radius: 8px; padding: 15px 30px; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+        #submit-btn:hover, .start-btn:hover { background-color: #8e44ad; }
+        
         #feedback-msg { margin-top: 10px; font-weight: bold; min-height: 25px; }
         .success-text { color: #2ecc71; }
         .error-text { color: #e74c3c; }
@@ -36,17 +31,23 @@
 
     <h1>I Spy: Purple Room Challenge</h1>
     <div id="game-container">
+        <div id="home-screen">
+            <h2>Welcome to I Spy!</h2>
+            <p>1. Observe the room closely.<br>2. Type a description of where the hidden object is.<br>3. Need help? Guess twice to reveal a riddle.</p>
+            <button class="start-btn" onclick="startGame()">Start Game</button>
+        </div>
+
         <img id="game-background" src="https://upload.wikimedia.org/wikipedia/commons/9/92/Computer_Room_Desk_2008.jpg" alt="Room">
-        <div id="win-message"><h1>Mystery Solved!</h1></div>
+        <div id="win-message"><h1>🎉 Mystery Solved! 🎉</h1></div>
     </div>
 
     <div id="control-panel">
         <div id="current-prompt-box">
             <span id="progress-counter">Item 1 of 10</span>
-            <p id="prompt-text">Find the: loading...</p>
+            <p id="prompt-text">Find the: 🔍 loading...</p>
         </div>
         <div id="input-area">
-            <input type="text" id="location-input" placeholder="Describe the location..." autocomplete="off">
+            <input type="text" id="location-input" placeholder="Describe where it is..." autocomplete="off">
             <button id="submit-btn">Submit</button>
         </div>
     </div>
@@ -54,23 +55,29 @@
 
     <script>
         const targetItems = [
-            { name: "Paper Fan", attempts: 0, validAnswers: [["fan", "behind", "globe"], ["fan", "tucked", "globe"], ["fan", "left", "laptop"], ["fan", "propped", "shelf"], ["fan", "corner", "desk"], ["fan", "obscured", "globe"], ["fan", "adjacent", "globe"]], hint: "A silent orator of the East, hiding in the shadow of the world." },
-            { name: "Peanut", attempts: 0, validAnswers: [["peanut", "resting", "seat"], ["peanut", "atop", "cushion"], ["peanut", "near", "edge"], ["peanut", "below", "desk"], ["peanut", "center", "seat"], ["peanut", "beside", "strap"]], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
-            { name: "Basketball Trophy", attempts: 0, validAnswers: [["trophy", "perched", "shelf"], ["trophy", "left", "football"], ["trophy", "front", "boombox"], ["trophy", "between", "mannequin"], ["trophy", "adjacent", "doll"]], hint: "A hollow victory, standing guard over a motionless wooden performer." },
-            { name: "Harmonica", attempts: 0, validAnswers: [["harmonica", "resting", "shelf"], ["harmonica", "right", "tea"], ["harmonica", "adjacent", "teapot"], ["harmonica", "between", "pot", "angel"]], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
-            { name: "Air Vent", attempts: 0, validAnswers: [["vent", "corner"], ["vent", "mounted", "wall"], ["vent", "above", "birdcage"], ["vent", "high", "wall"], ["vent", "over", "birdcage"], ["vent", "adjacent", "corner"]], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
-            { name: "Cherry", attempts: 0, validAnswers: [["cherry", "resting", "paddle"], ["cherry", "left", "olive"], ["cherry", "atop", "paddle"], ["cherry", "nestled", "racket"], ["cherry", "adjacent", "ball"]], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
-            { name: "Coat Hanger", attempts: 0, validAnswers: [["hanger", "hanging", "shelf"], ["hanger", "draped", "shelf"], ["hanger", "left", "trophy"], ["hanger", "suspended", "wall"], ["hanger", "obscured", "flower"], ["hanger", "adjacent", "trophy"]], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
-            { name: "Necklace", attempts: 0, validAnswers: [["necklace", "draped", "chair"], ["necklace", "hanging", "backrest"], ["necklace", "behind", "cat"], ["necklace", "suspended", "upholstery"]], hint: "A circle of cold gold, mourning the weight of a person who never arrived." },
-            { name: "Golf ball", attempts: 0, validAnswers: [["ball", "resting", "floor"], ["ball", "behind", "bottle"], ["ball", "tucked", "desk"], ["ball", "lying", "leg"], ["ball", "obscured", "bottle"], ["ball", "adjacent", "bottle"]], hint: "A traveler from the manicured green, now an exile on a dark, cluttered floor." },
-            { name: "Maple leaf", attempts: 0, validAnswers: [["leaf", "behind", "birdcage"], ["leaf", "above", "lei"], ["leaf", "attached", "wall"], ["leaf", "obscured", "birdcage"], ["leaf", "pinned", "pushpin"]], hint: "A burning memory of autumn, forever frozen by a sharp, blue transgression." }
+            { name: "Paper Fan 🪭", attempts: 0, keywords: ["behind", "globe", "left", "laptop", "propped", "shelf", "corner"], hint: "A silent orator of the East, hiding in the shadow of the world." },
+            { name: "Peanut 🥜", attempts: 0, keywords: ["resting", "seat", "atop", "cushion", "below", "desk", "beside", "strap"], hint: "A forgotten shell of potential, lost within the fabric of a sedentary throne." },
+            { name: "Basketball Trophy 🏆", attempts: 0, keywords: ["perched", "shelf", "left", "football", "front", "boombox", "between", "mannequin", "adjacent", "doll"], hint: "A hollow victory, standing guard over a motionless wooden performer." },
+            { name: "Harmonica 🪗", attempts: 0, keywords: ["resting", "shelf", "right", "tea", "adjacent", "teapot", "between", "pot", "angel"], hint: "A chorus of metal, wedged between a ceramic vessel and a wingless spirit." },
+            { name: "Air Vent 💨", attempts: 0, keywords: ["corner", "mounted", "wall", "above", "birdcage", "high", "over"], hint: "A mechanical lung, inhaling the secrets of the room from the highest boundary." },
+            { name: "Cherry 🍒", attempts: 0, keywords: ["resting", "paddle", "left", "olive", "atop", "nestled", "racket", "adjacent", "ball"], hint: "A singular fruit, waiting to be struck in an arena of rubber and wood." },
+            { name: "Coat Hanger 🧥", attempts: 0, keywords: ["hanging", "shelf", "draped", "left", "trophy", "suspended", "wall", "obscured", "flower"], hint: "A skeletal silhouette, abandoned on the precipice of a high shelf." },
+            { name: "Necklace 📿", attempts: 0, keywords: ["draped", "chair", "hanging", "backrest", "behind", "cat", "suspended", "upholstery"], hint: "A circle of cold gold, mourning the weight of a person who never arrived." },
+            { name: "Golf ball ⚪", attempts: 0, keywords: ["resting", "floor", "behind", "bottle", "tucked", "desk", "lying", "leg"], hint: "A traveler from the manicured green, now an exile on a dark, cluttered floor." },
+            { name: "Maple leaf 🍁", attempts: 0, keywords: ["behind", "birdcage", "above", "lei", "attached", "wall", "obscured", "pinned", "pushpin"], hint: "A burning memory of autumn, forever frozen by a sharp, blue transgression." }
         ];
 
         let currentItemIndex = 0;
+        const homeScreen = document.getElementById('home-screen');
         const promptText = document.getElementById('prompt-text');
         const progressCounter = document.getElementById('progress-counter');
         const locationInput = document.getElementById('location-input');
         const feedbackMsg = document.getElementById('feedback-msg');
+
+        function startGame() {
+            homeScreen.style.display = 'none';
+            loadItem();
+        }
 
         function loadItem() {
             if (currentItemIndex < targetItems.length) {
@@ -89,9 +96,10 @@
         function checkAnswer() {
             const playerAnswer = locationInput.value.toLowerCase().trim();
             const item = targetItems[currentItemIndex];
-            let isCorrect = item.validAnswers.some(rule => rule.every(k => playerAnswer.includes(k)));
+            
+            let matchCount = item.keywords.filter(word => playerAnswer.includes(word)).length;
 
-            if (isCorrect) {
+            if (matchCount >= 2) {
                 feedbackMsg.innerText = "🎯 Spot on!";
                 feedbackMsg.className = "success-text";
                 currentItemIndex++;
@@ -107,7 +115,6 @@
 
         document.getElementById('submit-btn').addEventListener('click', checkAnswer);
         locationInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkAnswer(); });
-        loadItem();
     </script>
 </body>
 </html>
